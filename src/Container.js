@@ -86,18 +86,15 @@ class InputBar extends React.Component {
         <input
           className="input"
           type="text"
-          placeholder="write to do!"
+          placeholder="Write to do!"
           value={this.props.newTodoText}
           onChange={this.handleInputTextChange}
         />
-        <a>
-          {" "}
-          <ion-icon
-            id="add"
-            name="add-outline"
-            onClick={this.handleAddNewTodoText}
-          ></ion-icon>
-        </a>
+        <ion-icon
+          id="add"
+          name="add-outline"
+          onClick={this.handleAddNewTodoText}
+        ></ion-icon>
       </form>
     );
   }
@@ -116,12 +113,12 @@ class CompletedList extends React.Component {
     let lastCategory = "";
     this.props.doneDatum.forEach((doneData) => {
       const doneDate = new Date(doneData.doneDate);
-      const doneYearMonth = `${doneDate.getFullYear()}.${
-        doneDate.getMonth() + 1
-      }`;
-      const doneYearMonthDate = `${doneDate.getFullYear()}.${
-        doneDate.getMonth() + 1
-      }.${doneDate.getDate()}`;
+      const DONE_YEAR = doneDate.getFullYear();
+      const DONE_MONTH = doneDate.getMonth();
+      const DONE_DATE = doneDate.getDate();
+
+      const doneYearMonth = `${DONE_YEAR}.${DONE_MONTH + 1}`;
+      const doneYearMonthDate = `${DONE_YEAR}.${DONE_MONTH + 1}.${DONE_DATE}`;
 
       const startDate = new Date(doneData.id);
       const startYearMonthDate = `${startDate.getFullYear()}.${
@@ -147,7 +144,6 @@ class CompletedList extends React.Component {
         </div>
       );
       lastCategory = doneYearMonth;
-      console.log(lastCategory);
     });
     return (
       <div>
@@ -231,9 +227,11 @@ class Container extends React.Component {
     this.saveData("todos", arrayedTodoDatum);
   }
   handleDeleteTodo(key, datumType) {
-    if (datumType == "todoDatum") {
+    if (datumType === "todoDatum") {
       let copyDatum = [...this.state.todoDatum];
-      const index = copyDatum.findIndex((todoData) => todoData.id == key);
+      const index = copyDatum.findIndex(
+        (todoData) => todoData.id === Number(key)
+      );
 
       const deletedData = copyDatum.splice(index, 1);
 
@@ -243,9 +241,11 @@ class Container extends React.Component {
 
       this.saveData("todos", copyDatum);
       return deletedData;
-    } else if (datumType == "doneDatum") {
+    } else if (datumType === "doneDatum") {
       let copyDatum = [...this.state.doneDatum];
-      const index = copyDatum.findIndex((todoData) => todoData.id == key);
+      const index = copyDatum.findIndex(
+        (todoData) => todoData.id === Number(key)
+      );
 
       copyDatum.splice(index, 1);
 
@@ -269,7 +269,6 @@ class Container extends React.Component {
     });
   }
   render() {
-    //if (this.state.isLoading) return <Loader />;
     return this.state.isLoading ? (
       <Loader />
     ) : (

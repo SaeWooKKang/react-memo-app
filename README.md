@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+## [React로 생각하기](https://ko.reactjs.org/docs/thinking-in-react.html)를 참고하여 웹 애플리케이션 메모장 제작
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+###작업 순서
 
-## Available Scripts
+1.  메모앱의 UI를 노트에 그리고, UI를 컴포넌트 계층구조로 나눴습니다.
 
-In the project directory, you can run:
+2.  UI를 컴포넌트 계층 구조로 나눴습니다.
+    Container, CompletedList, InputBar, TodoList, Todo
 
-### `npm start`
+3.  데이터를 임의로 생성해 정적인 버전을 만들었습니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+4.  여러 데이터 중 상호작용에 필요한 state를 최소한으로 정했습니다.
+    newTodoText, todoDatum, doneDatum, isLoading
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+5.  계층구조 상단에 있는 Container에 state 위치를 정했습니다.
 
-### `npm test`
+6.  이벤트 핸들러로 역방향 데이터 흐름 추가 했습니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+7.  scss로 style작업
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+###컴포넌트
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+####Container
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+제일 상단의 컴포넌트로 다른 컴포넌트들을 반환
 
-### `npm run eject`
+state 변경 메소드들 정의
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- handleInputTextChange
+  사용자가 입력한 값으로 state 변경
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- handleAddNewTodoText
+  기존 저장된 데이터에 새로운 데이터를 추가, 시간순으로 정렬하여 state 저장
+  변경된 데이터를 saveData함수를 호출하여 localStorage에 저장
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- handleDeleteTodo
+  인수로 전달받은 key값을 찾아서 splice함수로 제거
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- handleDoneTodo
+  todoDatum 데이터 목록에서 (handleDeleteTodo 호출)삭제, doneDatum에 추가
 
-## Learn More
+- componentDidMount
+  getTodoDaum 함수를 호출하여 localStorage의 데이터가 저장되어 있다면 불러옵니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### InputBar
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+사용자에게 텍스트 입력받는 컴포넌트
 
-### Code Splitting
+#### TodoList
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+미완료된 목록, 연도와 월을 기준으로 정렬
+TodoDateRow, Todo 컴포넌트 사용하여 todo목록 구성
 
-### Analyzing the Bundle Size
+#### CompletedList
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+완료된 목록, 완성된 날짜를 기준으로 정렬
+TodoDateRow, Todo 컴포넌트 사용하여 todo목록 구성
 
-### Making a Progressive Web App
+#### Todo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+todo 텍스트 출력
 
-### Advanced Configuration
+#### TodoDateRow
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+입력받은 todo의 년월을 출력
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 작업 후기
 
-### `npm run build` fails to minify
+UI는 최대한 심플하게 제작하려고 노력 했습니다. 해야할 목록을 시각적으로 눈에 먼저 들어오게 주황색으로, 완료된 목록을 긍정의 의미인 푸른색으로 제작 하였습니다. 또 메모 제작 년도와 월을 기준으로 내림차순 정렬하였고, 완료된 목록은 완료된 기간을 추가하여 소요 기간을 알 수 있도록 제작했습니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+코드작성은 코드의 중복을 제거하고자 TodoList 컴포넌트에 사용한 Todo와 TodoDateRow 컴포넌트를 Compeleted 컴포넌트에서 재사용 했습니다.
+생각했던 대로 메모앱을 구현하는데 성공했지만, 제작 후 최근엔 클래스형 컴포넌트가 아닌 함수형 컴포넌트가 많이 사용한다는것을 알게 되었습니다. 다음엔 함수형 컴포넌트를 사용해 제작해봐야 겠습니다.
