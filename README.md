@@ -2,7 +2,7 @@
 
 ### 작업 순서
 
-1.  메모앱의 UI를 노트에 그리고, UI를 컴포넌트 계층구조로 나눴습니다.
+1.  메모앱의 UI를 노트에 그리기
 
 2.  UI를 컴포넌트 계층 구조로 나눴습니다.
     Container, CompletedList, InputBar, TodoList, Todo
