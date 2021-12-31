@@ -1,8 +1,8 @@
 ## [React로 생각하기](https://ko.reactjs.org/docs/thinking-in-react.html)를 참고하여 웹 애플리케이션 메모장 제작
 
-###작업 순서
+### 작업 순서
 
-1.  메모앱의 UI를 노트에 그리고, UI를 컴포넌트 계층구조로 나눴습니다.
+1.  메모앱의 UI를 노트에 그리기
 
 2.  UI를 컴포넌트 계층 구조로 나눴습니다.
     Container, CompletedList, InputBar, TodoList, Todo
@@ -20,9 +20,9 @@
 
 ---
 
-###컴포넌트
+### 컴포넌트
 
-####Container
+#### Container
 
 제일 상단의 컴포넌트로 다른 컴포넌트들을 반환
 
