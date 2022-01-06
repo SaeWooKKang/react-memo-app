@@ -5,17 +5,15 @@ import Todo from "./Todo";
 class TodoList extends React.Component {
   constructor(props) {
     super(props);
-    this.handleDeleteTodo = this.handleDeleteTodo.bind(this);
-    this.handleDoneTodo = this.handleDoneTodo.bind(this);
   }
-  handleDeleteTodo({ target }) {
+  handleDeleteTodo = ({ target }) => {
     if (!target.matches(".todoData>#delete")) return null;
     this.props.onDeleteTodo(target.parentNode.id, "todoDatum");
-  }
-  handleDoneTodo({ target }) {
+  };
+  handleDoneTodo = ({ target }) => {
     if (!target.matches("div>#done")) return null;
     this.props.onDoneTodo(target.parentNode.id);
-  }
+  };
   render() {
     const rows = [];
     let lastCategory = null;

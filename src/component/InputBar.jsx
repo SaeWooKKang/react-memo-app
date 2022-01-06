@@ -3,16 +3,14 @@ import React from "react";
 class InputBar extends React.Component {
   constructor(props) {
     super(props);
-    this.handleInputTextChange = this.handleInputTextChange.bind(this);
-    this.handleAddNewTodoText = this.handleAddNewTodoText.bind(this);
   }
-  handleInputTextChange(e) {
+  handleInputTextChange = (e) => {
     this.props.onInputTextChange(e.target.value);
-  }
-  handleAddNewTodoText(e) {
+  };
+  handleAddNewTodoText = (e) => {
     this.props.onAddNewTodoText();
     e.preventDefault();
-  }
+  };
   render() {
     return (
       <form className="inputBar" onSubmit={this.handleAddNewTodoText}>

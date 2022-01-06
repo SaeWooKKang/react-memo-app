@@ -5,12 +5,11 @@ import Todo from "./Todo";
 class CompletedList extends React.Component {
   constructor(props) {
     super(props);
-    this.handleDeleteTodo = this.handleDeleteTodo.bind(this);
   }
-  handleDeleteTodo({ target }) {
+  handleDeleteTodo = ({ target }) => {
     if (!target.matches(".todoData>ion-icon")) return null;
     this.props.onDeleteTodo(target.parentNode.parentNode.id, "doneDatum");
-  }
+  };
   render() {
     const rows = [];
     let lastCategory = "";

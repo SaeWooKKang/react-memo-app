@@ -15,11 +15,6 @@ class Container extends React.Component {
       doneDatum: [],
       isLoading: true,
     };
-
-    this.handleInputTextChange = this.handleInputTextChange.bind(this);
-    this.handleAddNewTodoText = this.handleAddNewTodoText.bind(this);
-    this.handleDeleteTodo = this.handleDeleteTodo.bind(this);
-    this.handleDoneTodo = this.handleDoneTodo.bind(this);
   }
   componentDidMount() {
     this.getTodoDatum();
@@ -50,12 +45,12 @@ class Container extends React.Component {
   saveData(name, todoDatum) {
     window.localStorage.setItem(name, JSON.stringify(todoDatum));
   }
-  handleInputTextChange(newTodoText) {
+  handleInputTextChange = (newTodoText) => {
     this.setState({
       newTodoText: newTodoText,
     });
-  }
-  handleAddNewTodoText() {
+  };
+  handleAddNewTodoText = () => {
     if (!this.state.newTodoText) return;
     const date = new Date();
     const year = date.getFullYear();
@@ -77,8 +72,8 @@ class Container extends React.Component {
       newTodoText: "",
     });
     this.saveData("todos", arrayedTodoDatum);
-  }
-  handleDeleteTodo(key, datumType) {
+  };
+  handleDeleteTodo = (key, datumType) => {
     if (datumType === "todoDatum") {
       let copyDatum = [...this.state.todoDatum];
       const index = copyDatum.findIndex(
@@ -107,8 +102,8 @@ class Container extends React.Component {
 
       this.saveData("doneTodos", copyDatum);
     }
-  }
-  handleDoneTodo(key) {
+  };
+  handleDoneTodo = (key) => {
     let doneTodo = this.handleDeleteTodo(key, "todoDatum");
     doneTodo[0].doneDate = Date.now();
     let newDoneTodo = [...this.state.doneDatum, ...doneTodo].sort(
@@ -119,7 +114,7 @@ class Container extends React.Component {
     this.setState({
       doneDatum: newDoneTodo,
     });
-  }
+  };
   render() {
     return this.state.isLoading ? (
       <Loader />
