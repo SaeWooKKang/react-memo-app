@@ -1,4 +1,4 @@
-import React from "react";
+import { PureComponent, Component } from "react";
 import GlobalStyles from "../GlobalStyles";
 import "../css/style.scss";
 import Loader from "../Loader";
@@ -6,7 +6,7 @@ import InputBar from "./InputBar";
 import TodoList from "./TodoList";
 import CompletedList from "./CompletedList";
 
-class Container extends React.Component {
+class Container extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -134,7 +134,6 @@ class Container extends React.Component {
             onAddNewTodoText={this.handleAddNewTodoText}
           />
           <TodoList
-            newTodoText={newTodoText}
             onAddNewTodoText={this.handleAddNewTodoText}
             todoDatum={todoDatum}
             onDeleteTodo={this.handleDeleteTodo}

@@ -1,8 +1,8 @@
-import React from "react";
+import { PureComponent } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 
-class TodoList extends React.Component {
+class TodoList extends PureComponent {
   handleDeleteTodo = ({ target }) => {
     if (!target.matches(".todoData>#delete")) return null;
     this.props.onDeleteTodo(target.parentNode.id, "todoDatum");
@@ -13,12 +13,13 @@ class TodoList extends React.Component {
   };
   render() {
     const { todoDatum } = this.props;
+    const todoDatum2 = todoDatum;
     const rows = [];
     let lastCategory = null;
 
-    if (!todoDatum) return;
+    if (!todoDatum2) return;
 
-    todoDatum.forEach((todoData) => {
+    todoDatum2.forEach((todoData) => {
       if (todoData.todoDate !== lastCategory) {
         rows.push(
           <TodoDateRow date={todoData.todoDate} key={todoData.todoDate} />

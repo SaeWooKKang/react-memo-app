@@ -1,6 +1,6 @@
-import React from "react";
+import { PureComponent } from "react";
 
-class TodoDateRow extends React.Component {
+class TodoDateRow extends PureComponent {
   render() {
     const date = this.props.date;
 

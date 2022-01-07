@@ -1,6 +1,6 @@
-import React from "react";
+import { PureComponent } from "react";
 
-class InputBar extends React.Component {
+class InputBar extends PureComponent {
   handleInputTextChange = (e) => {
     this.props.onInputTextChange(e.target.value);
   };

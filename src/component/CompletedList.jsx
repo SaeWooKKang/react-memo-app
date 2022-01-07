@@ -1,8 +1,8 @@
-import React from "react";
+import { PureComponent } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 
-class CompletedList extends React.Component {
+class CompletedList extends PureComponent {
   constructor(props) {
     super(props);
   }
