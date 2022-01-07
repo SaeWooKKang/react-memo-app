@@ -3,9 +3,6 @@ import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 
 class TodoList extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   handleDeleteTodo = ({ target }) => {
     if (!target.matches(".todoData>#delete")) return null;
     this.props.onDeleteTodo(target.parentNode.id, "todoDatum");
@@ -15,12 +12,13 @@ class TodoList extends React.Component {
     this.props.onDoneTodo(target.parentNode.id);
   };
   render() {
+    const { todoDatum } = this.props;
     const rows = [];
     let lastCategory = null;
 
-    if (!this.props.todoDatum) return;
+    if (!todoDatum) return;
 
-    this.props.todoDatum.forEach((todoData) => {
+    todoDatum.forEach((todoData) => {
       if (todoData.todoDate !== lastCategory) {
         rows.push(
           <TodoDateRow date={todoData.todoDate} key={todoData.todoDate} />

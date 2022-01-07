@@ -51,18 +51,20 @@ class Container extends React.Component {
     });
   };
   handleAddNewTodoText = () => {
-    if (!this.state.newTodoText) return;
+    const { newTodoText, todoDatum } = this.state;
+
+    if (!newTodoText) return;
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
 
     const newTodoData = {
       todoDate: `${year}.${month}`,
-      text: this.state.newTodoText,
+      text: newTodoText,
       id: Date.now(),
     };
 
-    const newTodoDatum = this.state.todoDatum;
+    const newTodoDatum = todoDatum;
     const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(
       this.compare("id")
     );
@@ -74,8 +76,10 @@ class Container extends React.Component {
     this.saveData("todos", arrayedTodoDatum);
   };
   handleDeleteTodo = (key, datumType) => {
+    const { todoDatum, doneDatum } = this.state;
+
     if (datumType === "todoDatum") {
-      let copyDatum = [...this.state.todoDatum];
+      let copyDatum = [...todoDatum];
       const index = copyDatum.findIndex(
         (todoData) => todoData.id === Number(key)
       );
@@ -89,7 +93,7 @@ class Container extends React.Component {
       this.saveData("todos", copyDatum);
       return deletedData;
     } else if (datumType === "doneDatum") {
-      let copyDatum = [...this.state.doneDatum];
+      let copyDatum = [...doneDatum];
       const index = copyDatum.findIndex(
         (todoData) => todoData.id === Number(key)
       );
@@ -116,6 +120,8 @@ class Container extends React.Component {
     });
   };
   render() {
+    const { newTodoText, todoDatum, doneDatum } = this.state;
+
     return this.state.isLoading ? (
       <Loader />
     ) : (
@@ -123,21 +129,21 @@ class Container extends React.Component {
         <GlobalStyles />
         <div className="left">
           <InputBar
-            newTodoText={this.state.newTodoText}
+            newTodoText={newTodoText}
             onInputTextChange={this.handleInputTextChange}
             onAddNewTodoText={this.handleAddNewTodoText}
           />
           <TodoList
-            newTodoText={this.state.newTodoText}
+            newTodoText={newTodoText}
             onAddNewTodoText={this.handleAddNewTodoText}
-            todoDatum={this.state.todoDatum}
+            todoDatum={todoDatum}
             onDeleteTodo={this.handleDeleteTodo}
             onDoneTodo={this.handleDoneTodo}
           />
         </div>
         <div className="right">
           <CompletedList
-            doneDatum={this.state.doneDatum}
+            doneDatum={doneDatum}
             onDeleteTodo={this.handleDeleteTodo}
           />
         </div>

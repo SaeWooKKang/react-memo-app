@@ -1,9 +1,6 @@
 import React from "react";
 
 class InputBar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   handleInputTextChange = (e) => {
     this.props.onInputTextChange(e.target.value);
   };
