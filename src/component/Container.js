@@ -1,4 +1,4 @@
-import { PureComponent, Component } from "react";
+import React, { useState, useEffect } from "react";
 import GlobalStyles from "../GlobalStyles";
 import "../css/style.scss";
 import Loader from "../Loader";
@@ -6,53 +6,40 @@ import InputBar from "./InputBar";
 import TodoList from "./TodoList";
 import CompletedList from "./CompletedList";
 
-class Container extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      newTodoText: "",
-      todoDatum: [],
-      doneDatum: [],
-      isLoading: true,
-    };
-  }
-  componentDidMount() {
-    this.getTodoDatum();
-  }
-  getTodoDatum = async () => {
+const Container = () => {
+  const [newTodoText, setNewTodoText] = useState("");
+  const [todoDatum, setTodoDatum] = useState([]);
+  const [doneDatum, setDoneDatum] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getTodoDatum();
+  }, []);
+
+  const getTodoDatum = async () => {
     const getTodoDatum = localStorage.getItem("todos");
     const getDoneDatum = localStorage.getItem("doneTodos");
 
     if (getTodoDatum) {
       const pasredTodoDatum = await JSON.parse(getTodoDatum);
-      this.setState({
-        todoDatum: pasredTodoDatum,
-      });
+      setTodoDatum(pasredTodoDatum);
     }
     if (getDoneDatum) {
       const parsedDoneDatum = await JSON.parse(getDoneDatum);
-      this.setState({
-        doneDatum: parsedDoneDatum,
-      });
+      setDoneDatum(parsedDoneDatum);
     }
-    this.setState({
-      isLoading: false,
-    });
+    setIsLoading(false);
   };
-  compare(key) {
-    return (a, b) => (a[key] < b[key] ? 1 : a[key] > b[key] ? -1 : 0);
-  }
-  saveData(name, todoDatum) {
-    window.localStorage.setItem(name, JSON.stringify(todoDatum));
-  }
-  handleInputTextChange = (newTodoText) => {
-    this.setState({
-      newTodoText: newTodoText,
-    });
-  };
-  handleAddNewTodoText = () => {
-    const { newTodoText, todoDatum } = this.state;
+  const compare = (key) => (a, b) =>
+    a[key] < b[key] ? 1 : a[key] > b[key] ? -1 : 0;
 
+  const saveData = (name, todoDatum) => {
+    window.localStorage.setItem(name, JSON.stringify(todoDatum));
+  };
+  const handleInputTextChange = (newTodoText) => {
+    setNewTodoText(newTodoText);
+  };
+  const handleAddNewTodoText = () => {
     if (!newTodoText) return;
     const date = new Date();
     const year = date.getFullYear();
@@ -65,19 +52,13 @@ class Container extends Component {
     };
 
     const newTodoDatum = todoDatum;
-    const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(
-      this.compare("id")
-    );
+    const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(compare("id"));
+    setTodoDatum(arrayedTodoDatum);
+    setNewTodoText("");
 
-    this.setState({
-      todoDatum: arrayedTodoDatum,
-      newTodoText: "",
-    });
-    this.saveData("todos", arrayedTodoDatum);
+    saveData("todos", arrayedTodoDatum);
   };
-  handleDeleteTodo = (key, datumType) => {
-    const { todoDatum, doneDatum } = this.state;
-
+  const handleDeleteTodo = (key, datumType) => {
     if (datumType === "todoDatum") {
       let copyDatum = [...todoDatum];
       const index = copyDatum.findIndex(
@@ -85,12 +66,9 @@ class Container extends Component {
       );
 
       const deletedData = copyDatum.splice(index, 1);
+      setTodoDatum(copyDatum);
 
-      this.setState({
-        todoDatum: copyDatum,
-      });
-
-      this.saveData("todos", copyDatum);
+      saveData("todos", copyDatum);
       return deletedData;
     } else if (datumType === "doneDatum") {
       let copyDatum = [...doneDatum];
@@ -99,55 +77,42 @@ class Container extends Component {
       );
 
       copyDatum.splice(index, 1);
+      setDoneDatum(copyDatum);
 
-      this.setState({
-        doneDatum: copyDatum,
-      });
-
-      this.saveData("doneTodos", copyDatum);
+      saveData("doneTodos", copyDatum);
     }
   };
-  handleDoneTodo = (key) => {
-    let doneTodo = this.handleDeleteTodo(key, "todoDatum");
+  const handleDoneTodo = (key) => {
+    let doneTodo = handleDeleteTodo(key, "todoDatum");
     doneTodo[0].doneDate = Date.now();
-    let newDoneTodo = [...this.state.doneDatum, ...doneTodo].sort(
-      this.compare("doneDate")
-    );
+    let newDoneTodo = [...doneDatum, ...doneTodo].sort(compare("doneDate"));
 
-    this.saveData("doneTodos", newDoneTodo);
-    this.setState({
-      doneDatum: newDoneTodo,
-    });
+    saveData("doneTodos", newDoneTodo);
+    setDoneDatum(newDoneTodo);
   };
-  render() {
-    const { newTodoText, todoDatum, doneDatum } = this.state;
-
-    return this.state.isLoading ? (
-      <Loader />
-    ) : (
-      <div className="container">
-        <GlobalStyles />
-        <div className="left">
-          <InputBar
-            newTodoText={newTodoText}
-            onInputTextChange={this.handleInputTextChange}
-            onAddNewTodoText={this.handleAddNewTodoText}
-          />
-          <TodoList
-            onAddNewTodoText={this.handleAddNewTodoText}
-            todoDatum={todoDatum}
-            onDeleteTodo={this.handleDeleteTodo}
-            onDoneTodo={this.handleDoneTodo}
-          />
-        </div>
-        <div className="right">
-          <CompletedList
-            doneDatum={doneDatum}
-            onDeleteTodo={this.handleDeleteTodo}
-          />
-        </div>
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className="container">
+      <GlobalStyles />
+      <div className="left">
+        <InputBar
+          newTodoText={newTodoText}
+          onInputTextChange={handleInputTextChange}
+          onAddNewTodoText={handleAddNewTodoText}
+        />
+        <TodoList
+          onAddNewTodoText={handleAddNewTodoText}
+          todoDatum={todoDatum}
+          onDeleteTodo={handleDeleteTodo}
+          onDoneTodo={handleDoneTodo}
+        />
       </div>
-    );
-  }
-}
+      <div className="right">
+        <CompletedList doneDatum={doneDatum} onDeleteTodo={handleDeleteTodo} />
+      </div>
+    </div>
+  );
+};
+
 export default Container;
