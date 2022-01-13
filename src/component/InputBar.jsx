@@ -1,7 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 
-const InputBar = (props) => {
+const InputBar = memo((props) => {
   const { onInputTextChange, onAddNewTodoText, newTodoText } = props;
+
   const handleInputTextChange = (e) => {
     onInputTextChange(e.target.value);
   };
@@ -26,6 +27,6 @@ const InputBar = (props) => {
       ></ion-icon>
     </form>
   );
-};
+});
 
 export default InputBar;

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import GlobalStyles from "../GlobalStyles";
 import "../css/style.scss";
+import { compare, filter, parseAndSet, log } from "./fs";
 import Loader from "../Loader";
 import InputBar from "./InputBar";
 import TodoList from "./TodoList";
@@ -21,75 +22,62 @@ const Container = () => {
     const getDoneDatum = localStorage.getItem("doneTodos");
 
     if (getTodoDatum) {
-      const pasredTodoDatum = await JSON.parse(getTodoDatum);
-      setTodoDatum(pasredTodoDatum);
+      parseAndSet(setTodoDatum, getTodoDatum);
     }
     if (getDoneDatum) {
-      const parsedDoneDatum = await JSON.parse(getDoneDatum);
-      setDoneDatum(parsedDoneDatum);
+      parseAndSet(setDoneDatum, getDoneDatum);
     }
     setIsLoading(false);
   };
-  const compare = (key) => (a, b) =>
-    a[key] < b[key] ? 1 : a[key] > b[key] ? -1 : 0;
 
   const saveData = (name, todoDatum) => {
-    window.localStorage.setItem(name, JSON.stringify(todoDatum));
+    localStorage.setItem(name, JSON.stringify(todoDatum));
   };
   const handleInputTextChange = (newTodoText) => {
     setNewTodoText(newTodoText);
   };
   const handleAddNewTodoText = () => {
-    if (!newTodoText) return;
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    if (!newTodoText) return null;
 
     const newTodoData = {
-      todoDate: `${year}.${month}`,
       text: newTodoText,
-      id: Date.now(),
+      startDate: Date.now(),
     };
 
-    const newTodoDatum = todoDatum;
+    const newTodoDatum = [...todoDatum];
     const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(compare("id"));
     setTodoDatum(arrayedTodoDatum);
     setNewTodoText("");
 
     saveData("todos", arrayedTodoDatum);
   };
-  const handleDeleteTodo = (key, datumType) => {
-    if (datumType === "todoDatum") {
-      let copyDatum = [...todoDatum];
-      const index = copyDatum.findIndex(
-        (todoData) => todoData.id === Number(key)
-      );
+  const handleDeleteTodo = useCallback((key, datum, datumType) => {
+    let copyDatum = [...datum];
 
-      const deletedData = copyDatum.splice(index, 1);
-      setTodoDatum(copyDatum);
+    const deletedDatum = filter((a) => a.startDate !== Number(key), copyDatum);
+    const deletedData = filter((a) => a.startDate === Number(key), copyDatum);
 
-      saveData("todos", copyDatum);
-      return deletedData;
-    } else if (datumType === "doneDatum") {
-      let copyDatum = [...doneDatum];
-      const index = copyDatum.findIndex(
-        (todoData) => todoData.id === Number(key)
-      );
+    datumType === "todoDatum"
+      ? setTodoDatum(deletedDatum)
+      : setDoneDatum(deletedDatum);
+    saveData("todos", deletedDatum);
 
-      copyDatum.splice(index, 1);
-      setDoneDatum(copyDatum);
+    return deletedData;
+  }, []);
 
-      saveData("doneTodos", copyDatum);
-    }
-  };
-  const handleDoneTodo = (key) => {
-    let doneTodo = handleDeleteTodo(key, "todoDatum");
-    doneTodo[0].doneDate = Date.now();
-    let newDoneTodo = [...doneDatum, ...doneTodo].sort(compare("doneDate"));
+  const handleDoneTodo = useCallback(
+    (key, todoDatum) => {
+      let doneTodo = handleDeleteTodo(key, todoDatum, "todoDatum");
+      log(doneTodo);
+      doneTodo[0].doneDate = Date.now();
+      let newDoneTodo = [...doneDatum, ...doneTodo].sort(compare("doneDate"));
 
-    saveData("doneTodos", newDoneTodo);
-    setDoneDatum(newDoneTodo);
-  };
+      saveData("doneTodos", newDoneTodo);
+      setDoneDatum(newDoneTodo);
+    },
+    [handleDeleteTodo, doneDatum]
+  );
+  console.log("Contianer component");
   return isLoading ? (
     <Loader />
   ) : (

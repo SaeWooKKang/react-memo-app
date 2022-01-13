@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 
@@ -15,25 +15,27 @@ const TodoList = (props) => {
     }
   };
   const handleDeleteTodo = (id) => {
-    onDeleteTodo(id, "todoDatum");
+    onDeleteTodo(id, todoDatum, "todoDatum");
   };
   const handleDoneTodo = (id) => {
-    onDoneTodo(id);
+    onDoneTodo(id, todoDatum);
   };
   const todoDatum2 = [...todoDatum];
   const rows = [];
   let lastCategory = null;
 
-  if (!todoDatum2) return;
+  if (!todoDatum2) return null;
 
-  todoDatum2.forEach((todoData) => {
+  todoDatum2.forEach((todoData, idx) => {
     if (todoData.todoDate !== lastCategory) {
-      rows.push(
-        <TodoDateRow date={todoData.todoDate} key={todoData.todoDate} />
-      );
+      rows.push(<TodoDateRow date={todoData.startDate} key={idx} />);
     }
     rows.push(
-      <div className="todoData" key={todoData.id} id={todoData.id}>
+      <div
+        className="todoData"
+        key={todoData.startDate}
+        id={todoData.startDate}
+      >
         <Todo todoData={todoData} />
         <ion-icon
           id="done"
@@ -49,6 +51,7 @@ const TodoList = (props) => {
     );
     lastCategory = todoData.todoDate;
   });
+
   return (
     <div onClick={onClickRouter} className="todoList">
       <div>{rows}</div>
@@ -56,4 +59,4 @@ const TodoList = (props) => {
   );
 };
 
-export default TodoList;
+export default memo(TodoList);

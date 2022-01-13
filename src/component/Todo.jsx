@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 
-const Todo = ({ todoData }) => {
+const Todo = memo(({ todoData }) => {
   const todo = todoData.text;
   return <div className="todo">{todo}</div>;
-};
+});
 
 export default Todo;

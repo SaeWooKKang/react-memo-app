@@ -87,6 +87,14 @@ UI는 최대한 심플하게 제작하려고 노력 했습니다. 해야할 목�
 
 - PureComponent 이용하여 성능 최적화
 
+**🚧 함수형 컴포넌트 변경 및 코드 수정중 🚧**
+
 2022-01-11
 
 - class 컴포넌트에서 functional 컴포넌트로 변경
+
+2022-01-13
+
+- todoData의 id, todoDate key를 startDate로 단일화
+- 순수 함수 fs.js 파일로 분리
+- handleDelteTodo 코드 수정

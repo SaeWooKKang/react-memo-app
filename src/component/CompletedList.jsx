@@ -1,34 +1,38 @@
-import React from "react";
+import React, { memo } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
+import { makeDate } from "./fs";
 
 const CompletedList = (props) => {
   const { onDeleteTodo, doneDatum } = props;
+
   const handleDeleteTodo = ({ target }) => {
     if (!target.matches(".todoData>ion-icon")) return null;
-    onDeleteTodo(target.parentNode.parentNode.id, "doneDatum");
+    onDeleteTodo(target.parentNode.parentNode.id, doneDatum, "doneDatum");
   };
   const rows = [];
   let lastCategory = "";
-  doneDatum.forEach((doneData) => {
-    const doneDate = new Date(doneData.doneDate);
-    const DONE_YEAR = doneDate.getFullYear();
-    const DONE_MONTH = doneDate.getMonth();
-    const DONE_DATE = doneDate.getDate();
 
-    const doneYearMonth = `${DONE_YEAR}.${DONE_MONTH + 1}`;
-    const doneYearMonthDate = `${DONE_YEAR}.${DONE_MONTH + 1}.${DONE_DATE}`;
+  doneDatum.forEach((doneData, idx) => {
+    const doneDate = makeDate(doneData.doneDate);
+    const { year: doneYear, month: doneMonth, day: doneDay } = doneDate;
 
-    const startDate = new Date(doneData.id);
-    const startYearMonthDate = `${startDate.getFullYear()}.${
-      startDate.getMonth() + 1
-    }.${startDate.getDate()}`;
+    const doneYearMonth = `${doneYear}.${doneMonth}`;
+    const doneYearMonthDate = doneYearMonth.concat(".", doneDay);
+
+    const startDate = makeDate(doneData.startDate);
+    const { year: startYear, month: startMonth, day: startDay } = startDate;
+    const startYearMonthDate = `${startYear}.${startMonth}.${startDay}`;
 
     if (doneYearMonth !== lastCategory) {
-      rows.push(<TodoDateRow date={doneYearMonth} key={doneData.doneDate} />);
+      rows.push(<TodoDateRow date={doneYearMonth} key={idx} />);
     }
     rows.push(
-      <div key={doneData.id} onClick={handleDeleteTodo} id={doneData.id}>
+      <div
+        key={doneData.startDate}
+        onClick={handleDeleteTodo}
+        id={doneData.startDate}
+      >
         <div className="period">
           {startYearMonthDate}~{doneYearMonthDate}
         </div>
@@ -44,6 +48,7 @@ const CompletedList = (props) => {
     );
     lastCategory = doneYearMonth;
   });
+  console.log("CompletedList component");
   return (
     <div>
       <div className="title">Completed</div>
@@ -52,4 +57,4 @@ const CompletedList = (props) => {
   );
 };
 
-export default CompletedList;
+export default memo(CompletedList);
