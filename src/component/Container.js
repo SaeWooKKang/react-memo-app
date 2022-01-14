@@ -8,7 +8,6 @@ import TodoList from "./TodoList";
 import CompletedList from "./CompletedList";
 
 const Container = () => {
-  const [newTodoText, setNewTodoText] = useState("");
   const [todoDatum, setTodoDatum] = useState([]);
   const [doneDatum, setDoneDatum] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,10 +32,7 @@ const Container = () => {
   const saveData = (name, todoDatum) => {
     localStorage.setItem(name, JSON.stringify(todoDatum));
   };
-  const handleInputTextChange = (newTodoText) => {
-    setNewTodoText(newTodoText);
-  };
-  const handleAddNewTodoText = () => {
+  const handleAddNewTodoText = (newTodoText) => {
     if (!newTodoText) return null;
 
     const newTodoData = {
@@ -47,7 +43,6 @@ const Container = () => {
     const newTodoDatum = [...todoDatum];
     const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(compare("id"));
     setTodoDatum(arrayedTodoDatum);
-    setNewTodoText("");
 
     saveData("todos", arrayedTodoDatum);
   };
@@ -84,11 +79,7 @@ const Container = () => {
     <div className="container">
       <GlobalStyles />
       <div className="left">
-        <InputBar
-          newTodoText={newTodoText}
-          onInputTextChange={handleInputTextChange}
-          onAddNewTodoText={handleAddNewTodoText}
-        />
+        <InputBar onAddNewTodoText={handleAddNewTodoText} />
         <TodoList
           onAddNewTodoText={handleAddNewTodoText}
           todoDatum={todoDatum}

@@ -1,14 +1,16 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 
-const InputBar = memo((props) => {
-  const { onInputTextChange, onAddNewTodoText, newTodoText } = props;
+const InputBar = (props) => {
+  const { onAddNewTodoText } = props;
+  const [inputText, setInputText] = useState("");
 
   const handleInputTextChange = (e) => {
-    onInputTextChange(e.target.value);
+    setInputText(e.target.value);
   };
   const handleAddNewTodoText = (e) => {
-    onAddNewTodoText();
+    onAddNewTodoText(inputText);
     e.preventDefault();
+    setInputText("");
   };
 
   return (
@@ -17,7 +19,7 @@ const InputBar = memo((props) => {
         className="input"
         type="text"
         placeholder="Write to do!"
-        value={newTodoText}
+        value={inputText}
         onChange={handleInputTextChange}
       />
       <ion-icon
@@ -27,6 +29,6 @@ const InputBar = memo((props) => {
       ></ion-icon>
     </form>
   );
-});
+};
 
-export default InputBar;
+export default memo(InputBar);
