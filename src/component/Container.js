@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import GlobalStyles from "../GlobalStyles";
 import "../css/style.scss";
-import { compare, filter, parseAndSet, log } from "./fs";
+import { compare, filter, parseAndSet } from "./fs";
 import Loader from "../Loader";
 import InputBar from "./InputBar";
 import TodoList from "./TodoList";
@@ -29,48 +29,59 @@ const Container = () => {
     setIsLoading(false);
   };
 
-  const saveData = (name, todoDatum) => {
+  const saveData = useCallback((name, todoDatum) => {
     localStorage.setItem(name, JSON.stringify(todoDatum));
-  };
-  const handleAddNewTodoText = (newTodoText) => {
-    if (!newTodoText) return null;
-
-    const newTodoData = {
-      text: newTodoText,
-      startDate: Date.now(),
-    };
-
-    const newTodoDatum = [...todoDatum];
-    const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(compare("id"));
-    setTodoDatum(arrayedTodoDatum);
-
-    saveData("todos", arrayedTodoDatum);
-  };
-  const handleDeleteTodo = useCallback((key, datum, datumType) => {
-    let copyDatum = [...datum];
-
-    const deletedDatum = filter((a) => a.startDate !== Number(key), copyDatum);
-    const deletedData = filter((a) => a.startDate === Number(key), copyDatum);
-
-    datumType === "todoDatum"
-      ? setTodoDatum(deletedDatum)
-      : setDoneDatum(deletedDatum);
-    saveData("todos", deletedDatum);
-
-    return deletedData;
   }, []);
+
+  const handleAddNewTodoText = useCallback(
+    (newTodoText) => {
+      if (!newTodoText) return null;
+
+      const newTodoData = {
+        text: newTodoText,
+        startDate: Date.now(),
+      };
+
+      const newTodoDatum = [...todoDatum];
+      const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(
+        compare("startDate")
+      );
+      setTodoDatum(arrayedTodoDatum);
+
+      saveData("todos", arrayedTodoDatum);
+    },
+    [todoDatum, saveData]
+  );
+  const handleDeleteTodo = useCallback(
+    (key, datum, datumType) => {
+      let copyDatum = [...datum];
+
+      const deletedDatum = filter(
+        (a) => a.startDate !== Number(key),
+        copyDatum
+      );
+      const deletedData = filter((a) => a.startDate === Number(key), copyDatum);
+
+      datumType === "todoDatum"
+        ? setTodoDatum(deletedDatum)
+        : setDoneDatum(deletedDatum);
+      saveData("todos", deletedDatum);
+
+      return deletedData;
+    },
+    [saveData]
+  );
 
   const handleDoneTodo = useCallback(
     (key, todoDatum) => {
       let doneTodo = handleDeleteTodo(key, todoDatum, "todoDatum");
-      log(doneTodo);
       doneTodo[0].doneDate = Date.now();
       let newDoneTodo = [...doneDatum, ...doneTodo].sort(compare("doneDate"));
 
       saveData("doneTodos", newDoneTodo);
       setDoneDatum(newDoneTodo);
     },
-    [handleDeleteTodo, doneDatum]
+    [handleDeleteTodo, doneDatum, saveData]
   );
   console.log("Contianer component");
   return isLoading ? (

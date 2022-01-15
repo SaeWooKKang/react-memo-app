@@ -17,16 +17,17 @@ const TodoList = (props) => {
   const handleDeleteTodo = (id) => {
     onDeleteTodo(id, todoDatum, "todoDatum");
   };
+
   const handleDoneTodo = (id) => {
     onDoneTodo(id, todoDatum);
   };
-  const todoDatum2 = [...todoDatum];
+  const copyDatum = [...todoDatum];
   const rows = [];
   let lastCategory = null;
 
-  if (!todoDatum2) return null;
+  if (!copyDatum) return null;
 
-  todoDatum2.forEach((todoData, idx) => {
+  copyDatum.forEach((todoData, idx) => {
     if (todoData.todoDate !== lastCategory) {
       rows.push(<TodoDateRow date={todoData.startDate} key={idx} />);
     }
@@ -51,7 +52,7 @@ const TodoList = (props) => {
     );
     lastCategory = todoData.todoDate;
   });
-
+  console.log("TodoList");
   return (
     <div onClick={onClickRouter} className="todoList">
       <div>{rows}</div>

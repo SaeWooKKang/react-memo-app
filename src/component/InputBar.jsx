@@ -12,7 +12,7 @@ const InputBar = (props) => {
     e.preventDefault();
     setInputText("");
   };
-
+  console.log("InputBar");
   return (
     <form className="inputBar" onSubmit={handleAddNewTodoText}>
       <input
