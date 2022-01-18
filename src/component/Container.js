@@ -17,9 +17,8 @@ const Container = () => {
   }, []);
 
   const getTodoDatum = async () => {
-    const getTodoDatum = localStorage.getItem("todos");
-    const getDoneDatum = localStorage.getItem("doneTodos");
-
+    const getTodoDatum = localStorage.getItem("todoDatum");
+    const getDoneDatum = localStorage.getItem("doneDatum");
     if (getTodoDatum) {
       parseAndSet(setTodoDatum, getTodoDatum);
     }
@@ -28,11 +27,9 @@ const Container = () => {
     }
     setIsLoading(false);
   };
-
   const saveData = useCallback((name, todoDatum) => {
     localStorage.setItem(name, JSON.stringify(todoDatum));
   }, []);
-
   const handleAddNewTodoText = useCallback(
     (newTodoText) => {
       if (!newTodoText) return null;
@@ -48,7 +45,7 @@ const Container = () => {
       );
       setTodoDatum(arrayedTodoDatum);
 
-      saveData("todos", arrayedTodoDatum);
+      saveData("todoDatum", arrayedTodoDatum);
     },
     [todoDatum, saveData]
   );
@@ -57,7 +54,7 @@ const Container = () => {
       let copyDatum = [...datum];
 
       const deletedDatum = filter(
-        (a) => a.startDate !== Number(key),
+        (data) => data.startDate !== Number(key),
         copyDatum
       );
       const deletedData = filter((a) => a.startDate === Number(key), copyDatum);
@@ -65,34 +62,33 @@ const Container = () => {
       datumType === "todoDatum"
         ? setTodoDatum(deletedDatum)
         : setDoneDatum(deletedDatum);
-      saveData("todos", deletedDatum);
+      saveData(datumType, deletedDatum);
 
       return deletedData;
     },
     [saveData]
   );
-
   const handleDoneTodo = useCallback(
     (key, todoDatum) => {
       let doneTodo = handleDeleteTodo(key, todoDatum, "todoDatum");
       doneTodo[0].doneDate = Date.now();
       let newDoneTodo = [...doneDatum, ...doneTodo].sort(compare("doneDate"));
 
-      saveData("doneTodos", newDoneTodo);
+      saveData("doneDatum", newDoneTodo);
       setDoneDatum(newDoneTodo);
     },
     [handleDeleteTodo, doneDatum, saveData]
   );
-  console.log("Contianer component");
   return isLoading ? (
-    <Loader />
+    <div className={"loader"}>
+      <Loader />
+    </div>
   ) : (
     <div className="container">
       <GlobalStyles />
       <div className="left">
         <InputBar onAddNewTodoText={handleAddNewTodoText} />
         <TodoList
-          onAddNewTodoText={handleAddNewTodoText}
           todoDatum={todoDatum}
           onDeleteTodo={handleDeleteTodo}
           onDoneTodo={handleDoneTodo}

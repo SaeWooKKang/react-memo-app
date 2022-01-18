@@ -8,16 +8,15 @@ const TodoList = (props) => {
   const onClickRouter = ({ target }) => {
     const { id } = target.parentNode;
 
-    if (target.matches(".todoData>#delete")) {
+    if (target.matches("#delete")) {
       handleDeleteTodo(id);
-    } else if (target.matches(".todoData>#done")) {
+    } else if (target.matches("#done")) {
       handleDoneTodo(id);
     }
   };
   const handleDeleteTodo = (id) => {
     onDeleteTodo(id, todoDatum, "todoDatum");
   };
-
   const handleDoneTodo = (id) => {
     onDoneTodo(id, todoDatum);
   };
@@ -52,7 +51,6 @@ const TodoList = (props) => {
     );
     lastCategory = todoData.todoDate;
   });
-  console.log("TodoList");
   return (
     <div onClick={onClickRouter} className="todoList">
       <div>{rows}</div>

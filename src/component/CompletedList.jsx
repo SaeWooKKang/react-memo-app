@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 import { makeDate } from "./fs";
@@ -6,13 +6,10 @@ import { makeDate } from "./fs";
 const CompletedList = (props) => {
   const { onDeleteTodo, doneDatum } = props;
 
-  const handleDeleteTodo = useCallback(
-    ({ target }) => {
-      if (!target.matches(".todoData>ion-icon")) return null;
-      onDeleteTodo(target.parentNode.parentNode.id, doneDatum, "doneDatum");
-    },
-    [onDeleteTodo, doneDatum]
-  );
+  const handleDeleteTodo = ({ target }) => {
+    if (!target.matches(".todoData>ion-icon")) return null;
+    onDeleteTodo(target.parentNode.parentNode.id, doneDatum, "doneDatum");
+  };
   const rows = [];
   let lastCategory = "";
 
@@ -51,7 +48,6 @@ const CompletedList = (props) => {
     );
     lastCategory = doneYearMonth;
   });
-  console.log("CompletedList component");
   return (
     <div>
       <div className="title">Completed</div>
