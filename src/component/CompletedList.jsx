@@ -25,7 +25,7 @@ const CompletedList = (props) => {
     const startYearMonthDate = `${startYear}.${startMonth}.${startDay}`;
 
     if (doneYearMonth !== lastCategory) {
-      rows.push(<TodoDateRow date={doneYearMonth} key={idx} />);
+      rows.push(<TodoDateRow date={doneData.doneDate} key={idx} />);
     }
     rows.push(
       <div
