@@ -7,10 +7,15 @@ import InputBar from "./InputBar";
 import TodoList from "./TodoList";
 import CompletedList from "./CompletedList";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { isLoading } from '../redux/reducers/memoSlice';
+
 const Container = () => {
   const [todoDatum, setTodoDatum] = useState([]);
   const [doneDatum, setDoneDatum] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const memo = useSelector(state => state.memo);
 
   useEffect(() => {
     getTodoDatum();
@@ -25,7 +30,7 @@ const Container = () => {
     if (getDoneDatum) {
       parseAndSet(setDoneDatum, getDoneDatum);
     }
-    setIsLoading(false);
+    dispatch(isLoading(false));
   };
   const saveData = useCallback((name, todoDatum) => {
     localStorage.setItem(name, JSON.stringify(todoDatum));
@@ -79,7 +84,7 @@ const Container = () => {
     },
     [handleDeleteTodo, doneDatum, saveData]
   );
-  return isLoading ? (
+  return memo.isLoading ? (
     <div className={"loader"}>
       <Loader />
     </div>
