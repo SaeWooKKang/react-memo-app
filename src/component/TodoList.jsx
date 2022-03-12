@@ -2,11 +2,18 @@ import React, { memo } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { setTodoDatum } from '../redux/reducers/memoSlice';
+
 const TodoList = (props) => {
-  const { onDeleteTodo, onDoneTodo, todoDatum } = props;
+  const todoDatum = useSelector(state => state.memo.todoDatum);
+  // console.log(todoDatum);
+  const { onDeleteTodo, onDoneTodo} = props;
 
   const onClickRouter = ({ target }) => {
     const { id } = target.parentNode;
+    
+    // console.log('id', id);
 
     if (target.matches("#delete")) {
       handleDeleteTodo(id);
@@ -58,4 +65,4 @@ const TodoList = (props) => {
   );
 };
 
-export default memo(TodoList);
+export default (TodoList);

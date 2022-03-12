@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const getMemos = createAsyncThunk(
-  'memo/getMemos',
+  'memo/fetchMemo',
   async () => {
-    const response = await window.localStorage.getItem('todoDatum')
+    const response =  window.localStorage.getItem('todoDatum');
+    return response;
   }
 );
 

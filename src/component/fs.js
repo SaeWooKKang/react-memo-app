@@ -11,10 +11,10 @@ export const filter = (f, iter) => {
   }
   return arr;
 };
-export const parseAndSet = (setFunc, dataName) => {
-  const pasredTodoDatum = JSON.parse(dataName);
-  setFunc(pasredTodoDatum);
-};
+// export const parseAndSet = (setFunc, dataName) => {
+//   const pasredTodoDatum = JSON.parse(dataName);
+//   setFunc(pasredTodoDatum);
+// };
 
 // CompletedList, todoDateRow
 export const makeDate = (date) => {
