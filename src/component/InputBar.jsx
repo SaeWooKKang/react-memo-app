@@ -4,16 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import {setTodoDatum} from '../redux/reducers/memoSlice';
 
 import {compare} from './fs';
-import { saveData } from '../redux/fs';
+import {saveData} from './fs';
 
 const InputBar = () => {
-  // const { onAddNewTodoText } = props;
   const [inputText, setInputText] = useState("");
 
   const dispatch = useDispatch();
   const todoDatum = useSelector((state) =>state.memo.todoDatum);
-
-  console.log('todoDatum', todoDatum);
 
   const handleInputTextChange = (e) => {
     setInputText(e.target.value);

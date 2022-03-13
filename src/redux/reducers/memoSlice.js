@@ -12,7 +12,7 @@ export const memoSlice = createSlice({
   reducers: {
     isLoading: (state, action) => { state.isLoading = action.payload },
     fetchLocalStorageData: ( state, action ) => { state[action.payload]= JSON.parse(localStorage.getItem(action.payload)) || []},
-    setTodoDatum: (state, action) => {state.todoDatum = [...state.todoDatum, ...action.payload]},
+    setTodoDatum: (state, action) => {state.todoDatum = [...action.payload, ...state.todoDatum]},
     setDoneDatum: (state, action) => {state.doneDatum = [...action.payload]},
     deleteTodoDatum: (state, action) => {state.todoDatum = [...action.payload]},
     deleteDoneDatum: (state, action) => {state.doneDatum = [...action.payload]}
