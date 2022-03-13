@@ -1,85 +1,55 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import GlobalStyles from "../GlobalStyles";
 import "../css/style.scss";
-import { compare, filter, parseAndSet } from "./fs";
 import Loader from "../Loader";
 import InputBar from "./InputBar";
 import TodoList from "./TodoList";
 import CompletedList from "./CompletedList";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { isLoading, fetchLocalStorageData, deleteTodoDatum, deleteDoneDatum } from '../redux/reducers/memoSlice';
+
+import {saveData} from './fs';
+
 const Container = () => {
-  const [todoDatum, setTodoDatum] = useState([]);
-  const [doneDatum, setDoneDatum] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  const memo = useSelector(state => state.memo);
+  const doneDatum = useSelector(state => state.memo.doneDatum);
 
   useEffect(() => {
     getTodoDatum();
   }, []);
 
-  const getTodoDatum = async () => {
-    const getTodoDatum = localStorage.getItem("todoDatum");
-    const getDoneDatum = localStorage.getItem("doneDatum");
-    if (getTodoDatum) {
-      parseAndSet(setTodoDatum, getTodoDatum);
-    }
-    if (getDoneDatum) {
-      parseAndSet(setDoneDatum, getDoneDatum);
-    }
-    setIsLoading(false);
+  const getTodoDatum = useCallback(() => {
+    dispatch(fetchLocalStorageData('todoDatum'));
+    dispatch(fetchLocalStorageData('doneDatum'));
+    dispatch(isLoading(false));
+  }, [dispatch]);
+  
+  // TodoList, CompletedList 사용
+  const handleDeleteTodo = (key, datum, datumType) => {
+    const copyDatum = [...datum]; // [{}, {}, ...]
+
+    // 해당 데이터 지운 나머지 값들 
+    const deletedDatum = copyDatum.filter(
+      (data) => data.startDate !== Number(key)
+    );
+    // 삭제 된 {} 
+    const deletedData = copyDatum.filter((a) => a.startDate === Number(key));
+    
+    // store 저장
+    datumType === "todoDatum"
+      ? dispatch(deleteTodoDatum(deletedDatum))
+      : dispatch(deleteDoneDatum(deletedDatum));
+    
+    // localstorage 저장
+    saveData(datumType, deletedDatum);
+
+    return deletedData;
   };
-  const saveData = useCallback((name, todoDatum) => {
-    localStorage.setItem(name, JSON.stringify(todoDatum));
-  }, []);
-  const handleAddNewTodoText = useCallback(
-    (newTodoText) => {
-      if (!newTodoText) return null;
-
-      const newTodoData = {
-        text: newTodoText,
-        startDate: Date.now(),
-      };
-
-      const newTodoDatum = [...todoDatum];
-      const arrayedTodoDatum = [...newTodoDatum, newTodoData].sort(
-        compare("startDate")
-      );
-      setTodoDatum(arrayedTodoDatum);
-
-      saveData("todoDatum", arrayedTodoDatum);
-    },
-    [todoDatum, saveData]
-  );
-  const handleDeleteTodo = useCallback(
-    (key, datum, datumType) => {
-      let copyDatum = [...datum];
-
-      const deletedDatum = filter(
-        (data) => data.startDate !== Number(key),
-        copyDatum
-      );
-      const deletedData = filter((a) => a.startDate === Number(key), copyDatum);
-
-      datumType === "todoDatum"
-        ? setTodoDatum(deletedDatum)
-        : setDoneDatum(deletedDatum);
-      saveData(datumType, deletedDatum);
-
-      return deletedData;
-    },
-    [saveData]
-  );
-  const handleDoneTodo = useCallback(
-    (key, todoDatum) => {
-      let doneTodo = handleDeleteTodo(key, todoDatum, "todoDatum");
-      doneTodo[0].doneDate = Date.now();
-      let newDoneTodo = [...doneDatum, ...doneTodo].sort(compare("doneDate"));
-
-      saveData("doneDatum", newDoneTodo);
-      setDoneDatum(newDoneTodo);
-    },
-    [handleDeleteTodo, doneDatum, saveData]
-  );
-  return isLoading ? (
+  
+  return memo.isLoading ? (
     <div className={"loader"}>
       <Loader />
     </div>
@@ -87,12 +57,8 @@ const Container = () => {
     <div className="container">
       <GlobalStyles />
       <div className="left">
-        <InputBar onAddNewTodoText={handleAddNewTodoText} />
-        <TodoList
-          todoDatum={todoDatum}
-          onDeleteTodo={handleDeleteTodo}
-          onDoneTodo={handleDoneTodo}
-        />
+        <InputBar />
+        <TodoList onDeleteTodo={handleDeleteTodo}/>
       </div>
       <div className="right">
         <CompletedList doneDatum={doneDatum} onDeleteTodo={handleDeleteTodo} />
