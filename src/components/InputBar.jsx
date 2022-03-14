@@ -1,16 +1,16 @@
 import React, { memo, useState } from "react";
 
 import { useDispatch, useSelector } from 'react-redux';
-import {setTodoDatum} from '../redux/reducers/memoSlice';
+import { put } from '../redux/reducers/memoSlice';
 
-import {compare} from './fs';
-import {saveData} from './fs';
+import { compare } from './fs';
+import { saveData } from './fs';
 
 const InputBar = () => {
   const [inputText, setInputText] = useState("");
 
   const dispatch = useDispatch();
-  const todoDatum = useSelector((state) =>state.memo.todoDatum);
+  const todoDatum = useSelector(state => state.memo.todoDatum);
 
   const handleInputTextChange = (e) => {
     setInputText(e.target.value);
@@ -35,24 +35,24 @@ const InputBar = () => {
       compare("startDate")
     );
 
-    dispatch(setTodoDatum([newTodoData])); // [{}, {}, {}}]
+    dispatch(put({ stateName: 'todoDatum', value: arrayedTodoDatum })); // [{}, {}, {}}]
 
     saveData("todoDatum", arrayedTodoDatum);
   }
   
   return (
-    <form className="inputBar" onSubmit={handleAddNewTodoText}>
+    <form className="inputBar" onSubmit={ handleAddNewTodoText }>
       <input
         className="input"
         type="text"
         placeholder="Write to do!"
-        value={inputText}
-        onChange={handleInputTextChange}
+        value={ inputText }
+        onChange={ handleInputTextChange }
       />
       <ion-icon
         id="add"
         name="add-outline"
-        onClick={handleAddNewTodoText}
+        onClick={ handleAddNewTodoText }
       ></ion-icon>
     </form>
   );

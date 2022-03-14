@@ -22,22 +22,22 @@ const CompletedList = (props) => {
 
     const startDate = makeDate(doneData.startDate);
     const { year: startYear, month: startMonth, day: startDay } = startDate;
-    const startYearMonthDate = `${startYear}.${startMonth}.${startDay}`;
+    const startYearMonthDate = `${ startYear }.${ startMonth }.${ startDay }`;
 
     if (doneYearMonth !== lastCategory) {
-      rows.push(<TodoDateRow date={doneData.doneDate} key={idx} />);
+      rows.push(<TodoDateRow date={ doneData.doneDate } key={ idx } />);
     }
     rows.push(
       <div
-        key={doneData.startDate}
-        onClick={handleDeleteTodo}
-        id={doneData.startDate}
+        key={ doneData.startDate }
+        onClick={ handleDeleteTodo }
+        id={ doneData.startDate }
       >
         <div className="period">
-          {startYearMonthDate}~{doneYearMonthDate}
+          { startYearMonthDate }~{ doneYearMonthDate }
         </div>
         <div className="todoData">
-          <Todo todoData={doneData} />
+          <Todo todoData={ doneData } />
           <ion-icon
             id="delete"
             name="close-circle-outline"
@@ -51,7 +51,7 @@ const CompletedList = (props) => {
   return (
     <div>
       <div className="title">Completed</div>
-      <div className="doneList">{rows}</div>
+      <div className="doneList">{ rows }</div>
     </div>
   );
 };

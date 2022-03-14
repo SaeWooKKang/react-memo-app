@@ -4,7 +4,7 @@ import Todo from "./Todo";
 import {compare} from './fs';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setDoneDatum } from '../redux/reducers/memoSlice';
+import { put } from '../redux/reducers/memoSlice';
 import {saveData} from './fs';
 
 const TodoList = (props) => {
@@ -38,7 +38,7 @@ const TodoList = (props) => {
       doneTodo.doneDate = Date.now();
       const newDoneTodo = [...doneTodo, ...doneDatum].sort(compare("doneDate"));
       
-      dispatch(setDoneDatum(newDoneTodo));
+      dispatch(put({ stateName: 'doneDatum', value: newDoneTodo }));
       saveData("doneDatum", newDoneTodo);
     },
     [handleDeleteTodo, doneDatum, dispatch]
@@ -56,15 +56,15 @@ const TodoList = (props) => {
 
   copyDatum.forEach((todoData, idx) => {
     if (todoData.todoDate !== lastCategory) {
-      rows.push(<TodoDateRow date={todoData.startDate} key={idx} />);
+      rows.push(<TodoDateRow date={ todoData.startDate } key={ idx } />);
     }
     rows.push(
       <div
         className="todoData"
-        key={todoData.startDate}
-        id={todoData.startDate}
+        key={ todoData.startDate }
+        id={ todoData.startDate }
       >
-        <Todo todoData={todoData} />
+        <Todo todoData={ todoData } />
         <ion-icon
           id="done"
           className="done"
@@ -80,8 +80,8 @@ const TodoList = (props) => {
     lastCategory = todoData.todoDate;
   });
   return (
-    <div onClick={onClickRouter} className="todoList">
-      <div>{rows}</div>
+    <div onClick={ onClickRouter } className="todoList">
+      <div>{ rows }</div>
     </div>
   );
 };

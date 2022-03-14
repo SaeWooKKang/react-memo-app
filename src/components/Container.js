@@ -7,9 +7,9 @@ import TodoList from "./TodoList";
 import CompletedList from "./CompletedList";
 
 import { useDispatch, useSelector } from 'react-redux';
-import { isLoading, fetchLocalStorageData, deleteTodoDatum, deleteDoneDatum } from '../redux/reducers/memoSlice';
+import { put, fetchLocalStorageData } from '../redux/reducers/memoSlice';
 
-import {saveData} from './fs';
+import { saveData } from './fs';
 
 const Container = () => {
   const dispatch = useDispatch();
@@ -17,14 +17,12 @@ const Container = () => {
   const memo = useSelector(state => state.memo);
   const doneDatum = useSelector(state => state.memo.doneDatum);
 
-  useEffect(() => {
-    getTodoDatum();
-  }, []);
+  useEffect(() => getTodoDatum(), []);
 
   const getTodoDatum = useCallback(() => {
     dispatch(fetchLocalStorageData('todoDatum'));
     dispatch(fetchLocalStorageData('doneDatum'));
-    dispatch(isLoading(false));
+    dispatch(put({stateName: 'isLoading', value: false}));
   }, [dispatch]);
   
   // TodoList, CompletedList 사용
@@ -40,8 +38,8 @@ const Container = () => {
     
     // store 저장
     datumType === "todoDatum"
-      ? dispatch(deleteTodoDatum(deletedDatum))
-      : dispatch(deleteDoneDatum(deletedDatum));
+      ? dispatch(put({ stateName: 'todoDatum', value: deletedDatum }))
+      : dispatch(put({ stateName: 'doneDatum', value: deletedDatum }));
     
     // localstorage 저장
     saveData(datumType, deletedDatum);
@@ -50,7 +48,7 @@ const Container = () => {
   };
   
   return memo.isLoading ? (
-    <div className={"loader"}>
+    <div className="loader">
       <Loader />
     </div>
   ) : (
@@ -58,10 +56,10 @@ const Container = () => {
       <GlobalStyles />
       <div className="left">
         <InputBar />
-        <TodoList onDeleteTodo={handleDeleteTodo}/>
+        <TodoList onDeleteTodo={ handleDeleteTodo }/>
       </div>
       <div className="right">
-        <CompletedList doneDatum={doneDatum} onDeleteTodo={handleDeleteTodo} />
+        <CompletedList doneDatum={ doneDatum } onDeleteTodo={ handleDeleteTodo } />
       </div>
     </div>
   );

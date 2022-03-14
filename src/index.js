@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Container from "./component/Container";
+import Container from "./components/Container";
 import {store} from './redux/store';
 import {Provider} from 'react-redux';
 
