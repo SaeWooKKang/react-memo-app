@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { put } from '../redux/reducers/memoSlice';
 import {saveData} from './fs';
 
-const TodoList = (props) => {
+const TodoList = props => {
   const { onDeleteTodo } = props;
 
   const todoDatum = useSelector(state => state.memo.todoDatum);
@@ -27,7 +27,8 @@ const TodoList = (props) => {
 
   const handleDeleteTodo = useCallback((id) => {
     onDeleteTodo(id, todoDatum, "todoDatum");
-  },[onDeleteTodo, todoDatum]);
+    }, [onDeleteTodo, todoDatum]
+  );
 
   const onDoneTodo = useCallback(
     (key, todoDatum) => {

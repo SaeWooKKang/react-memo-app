@@ -3,8 +3,11 @@ import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 import { makeDate } from "./fs";
 
+import { useSelector } from 'react-redux';
+
 const CompletedList = (props) => {
-  const { onDeleteTodo, doneDatum } = props;
+  const { onDeleteTodo } = props;
+  const doneDatum = useSelector(({ memo }) => memo.doneDatum );
 
   const handleDeleteTodo = ({ target }) => {
     if (!target.matches(".todoData>ion-icon")) return null;

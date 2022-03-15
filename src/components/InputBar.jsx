@@ -1,9 +1,10 @@
 import React, { memo, useState } from "react";
+import * as L from "fxjs/Lazy";
+import { go, each, flat, curry } from 'fxjs';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { put } from '../redux/reducers/memoSlice';
 
-import { compare } from './fs';
 import { saveData } from './fs';
 
 const InputBar = () => {
@@ -12,34 +13,31 @@ const InputBar = () => {
   const dispatch = useDispatch();
   const todoDatum = useSelector(state => state.memo.todoDatum);
 
-  const handleInputTextChange = (e) => {
+   //  분리 하고 싶으나, dispatch 참조 문제로 안됨
+  const saveLocalAndStore = curry((dataType, newTexts) => go(
+    [newTexts],
+    each(saveData(dataType)),
+    each(todos => dispatch(put( { stateName: dataType, value: todos } )))
+  ));
+
+  const handleInputTextChange = e => {
     setInputText(e.target.value);
   };
-  const handleAddNewTodoText = (e) => {
-    onAddNewTodoText(inputText);
-    e.preventDefault();
-    setInputText("");
-  };
 
-  const onAddNewTodoText = (newTodoText) => {
+  const handleAddNewTodoText = e => go(
+      [makeTodoObj(inputText)], //  [[{}]]
+      each(saveLocalAndStore('todoDatum')),
+      each((_) => setInputText("")),
+      each((_) => e.preventDefault())
+  );
 
-    if (!newTodoText) return null;
+  const makeTodoObj = text => go(
+      [text],
+      L.map(t => ({ text: t, startDate: Date.now(), doneDate: null })), // {}
+      L.map(obj => [obj, ...todoDatum]), // [{}]
+      flat, // [{}]
+  );
 
-    const newTodoData = {
-      text: newTodoText,
-      startDate: Date.now(),
-      doneDate: null,
-    };
-
-    const arrayedTodoDatum = [newTodoData, ...todoDatum].sort(
-      compare("startDate")
-    );
-
-    dispatch(put({ stateName: 'todoDatum', value: arrayedTodoDatum })); // [{}, {}, {}}]
-
-    saveData("todoDatum", arrayedTodoDatum);
-  }
-  
   return (
     <form className="inputBar" onSubmit={ handleAddNewTodoText }>
       <input

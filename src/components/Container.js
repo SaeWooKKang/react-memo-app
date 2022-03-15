@@ -10,12 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { put, fetchLocalStorageData } from '../redux/reducers/memoSlice';
 
 import { saveData } from './fs';
+import { go, each, filter } from 'fxjs';
+import * as L from "fxjs/Lazy";
 
 const Container = () => {
   const dispatch = useDispatch();
 
-  const memo = useSelector(state => state.memo);
-  const doneDatum = useSelector(state => state.memo.doneDatum);
+  const { isLoading } = useSelector(state => state.memo);
 
   useEffect(() => getTodoDatum(), []);
 
@@ -24,30 +25,32 @@ const Container = () => {
     dispatch(fetchLocalStorageData('doneDatum'));
     dispatch(put({stateName: 'isLoading', value: false}));
   }, [dispatch]);
+
+  // localStorage, state 저장
+  const saveLocalAndStore = (dataType, newTexts) => go(
+    [newTexts],
+    each(saveData(dataType)),
+    each(todos => dispatch(put( { stateName: dataType, value: todos } )))
+  );
   
   // TodoList, CompletedList 사용
   const handleDeleteTodo = (key, datum, datumType) => {
-    const copyDatum = [...datum]; // [{}, {}, ...]
+    const deletedData = [];
 
-    // 해당 데이터 지운 나머지 값들 
-    const deletedDatum = copyDatum.filter(
-      (data) => data.startDate !== Number(key)
+    // 간결하게 표현했지만, 여전히 복잡도는 높음 -> 함수 분리할 것.
+    const deletedDatum = filter(data => 
+        data.startDate !== Number(key) 
+          ? true 
+          : (deletedData.push(data), false),
+        datum
     );
-    // 삭제 된 {} 
-    const deletedData = copyDatum.filter((a) => a.startDate === Number(key));
     
-    // store 저장
-    datumType === "todoDatum"
-      ? dispatch(put({ stateName: 'todoDatum', value: deletedDatum }))
-      : dispatch(put({ stateName: 'doneDatum', value: deletedDatum }));
-    
-    // localstorage 저장
-    saveData(datumType, deletedDatum);
+    saveLocalAndStore(datumType, deletedDatum);
 
     return deletedData;
   };
   
-  return memo.isLoading ? (
+  return isLoading ? (
     <div className="loader">
       <Loader />
     </div>
@@ -59,7 +62,7 @@ const Container = () => {
         <TodoList onDeleteTodo={ handleDeleteTodo }/>
       </div>
       <div className="right">
-        <CompletedList doneDatum={ doneDatum } onDeleteTodo={ handleDeleteTodo } />
+        <CompletedList onDeleteTodo={ handleDeleteTodo } />
       </div>
     </div>
   );
