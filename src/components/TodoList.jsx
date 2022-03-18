@@ -3,59 +3,57 @@ import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
 import {compare} from './fs';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { put } from '../redux/reducers/memoSlice';
-import {saveData} from './fs';
+import { useSelector } from 'react-redux';
+
+import { go, map, each, entries, flat, object } from 'fxjs';
 
 const TodoList = props => {
-  const { onDeleteTodo } = props;
+  const { onDeleteTodo, saveLocalAndStore } = props;
 
-  const todoDatum = useSelector(state => state.memo.todoDatum);
-  const doneDatum = useSelector(state => state.memo.doneDatum);
-  
-  const dispatch = useDispatch();
+  const todoDatum = useSelector(({ memo }) => memo.todoDatum);
+  const doneDatum = useSelector(({ memo }) => memo.doneDatum);
 
   const onClickRouter = ({ target }) => {
     const { id } = target.parentNode;
 
-    if (target.matches("#delete")) {
-      handleDeleteTodo(id);
-    } else if (target.matches("#done")) {
-      handleDoneTodo(id);
-    }
+    target.matches("#delete") 
+      ? onDeleteTodo(id, todoDatum, "todoDatum") 
+      : target.matches("#done") && onDoneTodo(id, todoDatum);
   };
 
-  const handleDeleteTodo = useCallback((id) => {
-    onDeleteTodo(id, todoDatum, "todoDatum");
-    }, [onDeleteTodo, todoDatum]
-  );
-
+  // handleDeleteTodo는 props로 전달 받은 OnDeleteTodo를 실행하는데 반환을 안해서 값을 캐치 못했음..
   const onDoneTodo = useCallback(
     (key, todoDatum) => {
-      let doneTodo = handleDeleteTodo(key, todoDatum, "todoDatum"); // [{}]
 
-      doneTodo = todoDatum.filter((a) => a.startDate === Number(key));
+      // 완료된 데이터를 얻음
+      const doneTodo = onDeleteTodo(key, todoDatum, "todoDatum"); // [{text: "1", startDate: 16, doneDate: null}] 
 
-      doneTodo.doneDate = Date.now();
-      const newDoneTodo = [...doneTodo, ...doneDatum].sort(compare("doneDate"));
+      // 참조에 의한 전달 지우기 -> 다른 멋진 방식이 있나 ?
+      let doneTodo2 = flat(map(entries, doneTodo)); // [ [], [] ]
+
+      // 완료 날짜 추가
+      doneTodo2.push(['doneDate', Date.now()]); // [ [], [], [] ]
+
+      // 객체로 바꾸고, 기존 데이터 병합, 정렬 
+      go(
+        [doneTodo2], // [ [[], [], []] ]
+        map(object), // [{}]
+        map(obj => [obj, ...doneDatum]), // [ [{}, {} ...] ]
+        each(arr => doneTodo2 = arr.sort(compare('doneDate'))) // [{}] 
+      );
       
-      dispatch(put({ stateName: 'doneDatum', value: newDoneTodo }));
-      saveData("doneDatum", newDoneTodo);
+      // store에 put 하므로 데이터 가공해서 보내야 함 
+      saveLocalAndStore('doneDatum', doneTodo2);
     },
-    [handleDeleteTodo, doneDatum, dispatch]
+    [onDeleteTodo, doneDatum, saveLocalAndStore]
   );
-
-  const handleDoneTodo = (id) => {
-    onDoneTodo(id, todoDatum);
-  };
-
+  
+  // 수정 해야할 부분
   const copyDatum = [...todoDatum];
   const rows = [];
   let lastCategory = null;
 
-  if (!copyDatum) return null;
-
-  copyDatum.forEach((todoData, idx) => {
+  copyDatum && copyDatum.forEach((todoData, idx) => {
     if (todoData.todoDate !== lastCategory) {
       rows.push(<TodoDateRow date={ todoData.startDate } key={ idx } />);
     }
@@ -80,6 +78,7 @@ const TodoList = props => {
     );
     lastCategory = todoData.todoDate;
   });
+
   return (
     <div onClick={ onClickRouter } className="todoList">
       <div>{ rows }</div>

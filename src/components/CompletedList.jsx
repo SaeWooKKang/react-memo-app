@@ -5,14 +5,14 @@ import { makeDate } from "./fs";
 
 import { useSelector } from 'react-redux';
 
-const CompletedList = (props) => {
-  const { onDeleteTodo } = props;
+const CompletedList = ({ onDeleteTodo }) => {
+  
   const doneDatum = useSelector(({ memo }) => memo.doneDatum );
 
-  const handleDeleteTodo = ({ target }) => {
-    if (!target.matches(".todoData>ion-icon")) return null;
+  const handleDeleteTodo = ({ target }) => target.matches("#delete") && 
     onDeleteTodo(target.parentNode.parentNode.id, doneDatum, "doneDatum");
-  };
+
+  // 수정 해야할 부분
   const rows = [];
   let lastCategory = "";
 
@@ -51,6 +51,7 @@ const CompletedList = (props) => {
     );
     lastCategory = doneYearMonth;
   });
+
   return (
     <div>
       <div className="title">Completed</div>

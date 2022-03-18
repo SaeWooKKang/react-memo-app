@@ -1,41 +1,27 @@
 import React, { memo, useState } from "react";
-import * as L from "fxjs/Lazy";
-import { go, each, flat, curry } from 'fxjs';
+import { go, each, map } from 'fxjs';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { put } from '../redux/reducers/memoSlice';
+import { useSelector } from 'react-redux';
 
-import { saveData } from './fs';
+const InputBar = ({saveLocalAndStore}) => {
+  const [inputText, setInputText] = useState('');
 
-const InputBar = () => {
-  const [inputText, setInputText] = useState("");
+  const todoDatum = useSelector(({ memo }) => memo.todoDatum);
 
-  const dispatch = useDispatch();
-  const todoDatum = useSelector(state => state.memo.todoDatum);
-
-   //  분리 하고 싶으나, dispatch 참조 문제로 안됨
-  const saveLocalAndStore = curry((dataType, newTexts) => go(
-    [newTexts],
-    each(saveData(dataType)),
-    each(todos => dispatch(put( { stateName: dataType, value: todos } )))
-  ));
-
-  const handleInputTextChange = e => {
-    setInputText(e.target.value);
-  };
-
+  const handleInputTextChange = ({target: {value}}) => setInputText(value);
+  
   const handleAddNewTodoText = e => go(
-      [makeTodoObj(inputText)], //  [[{}]]
-      each(saveLocalAndStore('todoDatum')),
-      each((_) => setInputText("")),
-      each((_) => e.preventDefault())
+    (e.preventDefault(), makeTodoObj(inputText)), //  [[{}]]
+    each(saveLocalAndStore('todoDatum')), // [{}]
+    each(_ => setInputText("")),
   );
 
+  // 입력받은 text를 객체로 만들고,
+  //  기존 state와 병합 
   const makeTodoObj = text => go(
-      [text],
-      L.map(t => ({ text: t, startDate: Date.now(), doneDate: null })), // {}
-      L.map(obj => [obj, ...todoDatum]), // [{}]
-      flat, // [{}]
+    text ? [text] : [],
+    map(t => ({ text: t, startDate: Date.now() })), // [{}]
+    map(obj => [obj, ...todoDatum]), // [[{}]]
   );
 
   return (

@@ -1,5 +1,4 @@
-import { curry, go, each } from 'fxjs';
-import { put } from '../redux/reducers/memoSlice';
+import { curry } from 'fxjs';
 
 export const compare = (key) => (a, b) =>
   a[key] < b[key] ? 1 : a[key] > b[key] ? -1 : 0;
@@ -14,8 +13,6 @@ export const makeDate = date => {
   return { year: YEAR, month: MONTH, day: DAY };
 };
 
-export const saveData = curry((name, todoDatum) => {
+export const saveLocal = curry((name, todoDatum) => {
   localStorage.setItem(name, JSON.stringify(todoDatum));
 });
-
-

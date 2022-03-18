@@ -1,23 +1,29 @@
-## [React로 생각하기](https://ko.reactjs.org/docs/thinking-in-react.html)를 참고하여 웹 애플리케이션 메모장 제작
+# [React로 생각하기](https://ko.reactjs.org/docs/thinking-in-react.html)를 참고하여 웹 애플리케이션 메모장 제작
+
+## Stacks
+<p float='left'> 
+  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+  <img src="https://img.shields.io/badge/redux-764abc?style=for-the-badge&logo=redux&logoColor=black">
+</p>
 
 ### 작업 순서
 
 1.  메모앱의 UI를 노트에 그리기
 
-2.  UI를 컴포넌트 계층 구조로 나눴습니다.
-    Container, CompletedList, InputBar, TodoList, Todo
+2.  UI를 컴포넌트 계층 구조로 나누기
 
-3.  데이터를 임의로 생성해 정적인 버전을 만들었습니다.
+3.  데이터를 임의로 생성해 정적인 버전을 만들기
 
-4.  여러 데이터 중 상호작용에 필요한 state를 최소한으로 정했습니다.  
-    newTodoText, todoDatum, doneDatum, isLoading
+4.  여러 데이터 중 상호작용에 필요한 state를 최소한으로 정하기  
 
-5.  계층구조 상단에 있는 Container에 state 위치를 정했습니다.
+5.  계층구조 상단에 있는 Container에 state 위치를 정하기
 
-6.  이벤트 핸들러로 역방향 데이터 흐름 추가 했습니다.
+6.  이벤트 핸들러로 역방향 데이터 흐름 추가  
 
 7.  scss로 style작업
 
+8. 리팩토링...
 ---
 
 ### Class 컴포넌트
@@ -108,12 +114,6 @@ localStorage에서 데이터를 불러오는동안 로딩 화면 구현
 
 - redux로 상태관리
 
-#### 그 외 수정 사항
-
-- 컴포넌트 useMemo 적용
-- 함수 useEffect hook 적용
-- Loader 컴포넌트 스타일 변경
-- 함수를 사용하여 중복 제거
 
 ---
 
