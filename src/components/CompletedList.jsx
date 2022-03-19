@@ -4,6 +4,7 @@ import Todo from "./Todo";
 import { makeDate } from "./fs";
 
 import { useSelector } from 'react-redux';
+import { go, each, map, take, tap, join } from 'fxjs';
 
 const CompletedList = ({ onDeleteTodo }) => {
   
@@ -17,15 +18,33 @@ const CompletedList = ({ onDeleteTodo }) => {
   let lastCategory = "";
 
   doneDatum.forEach((doneData, idx) => {
-    const doneDate = makeDate(doneData.doneDate);
-    const { year: doneYear, month: doneMonth, day: doneDay } = doneDate;
+    
+    let doneYearMonth
+    let doneYearMonthDate
 
-    const doneYearMonth = `${doneYear}.${doneMonth}`;
-    const doneYearMonthDate = doneYearMonth.concat(".", doneDay);
+    go(
+      makeDate(doneData.doneDate), // {}
+      Object.entries, // [ [], [], [] ]
+      map( ([_, v]) => v), // [2022, 3, 19]
+      tap( // YMD
+        join('.'), // 2022.3.19
+        v => [v],
+        each(date => doneYearMonthDate = date)
+      ),
+      tap( // YM
+        take(2), // [2022, 3]
+        join('.'), // 2022.3
+        v => [v],
+        each(date => doneYearMonth = date)
+      ),
+    );
 
-    const startDate = makeDate(doneData.startDate);
-    const { year: startYear, month: startMonth, day: startDay } = startDate;
-    const startYearMonthDate = `${ startYear }.${ startMonth }.${ startDay }`;
+    const startYearMonthDate = go(
+      makeDate(doneData.startDate), // {}
+      Object.entries, // [ [], [], [] ]
+      map( ([_, v]) => v), // [2022, 3, 19]
+      join('.'), // 2022.3.19
+    );
 
     if (doneYearMonth !== lastCategory) {
       rows.push(<TodoDateRow date={ doneData.doneDate } key={ idx } />);
