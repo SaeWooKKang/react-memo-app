@@ -53,17 +53,17 @@ const TodoList = props => {
   const rows = [];
   let lastCategory = null;
 
-  copyDatum && copyDatum.forEach((todoData, idx) => {
-    if (todoData.todoDate !== lastCategory) {
-      rows.push(<TodoDateRow date={ todoData.startDate } key={ idx } />);
+  copyDatum && copyDatum.forEach(({todoDate, startDate, text}) => {
+    if (todoDate !== lastCategory) {
+      rows.push(<TodoDateRow date={ startDate } key={ startDate + 10 } />);
     }
     rows.push(
       <div
         className="todoData"
-        key={ todoData.startDate }
-        id={ todoData.startDate }
+        key={ startDate }
+        id={ startDate }
       >
-        <Todo todoData={ todoData } />
+        <Todo todoText={ text } />
         <ion-icon
           id="done"
           className="done"
@@ -76,7 +76,7 @@ const TodoList = props => {
         ></ion-icon>
       </div>
     );
-    lastCategory = todoData.todoDate;
+    lastCategory = todoDate;
   });
 
   return (
