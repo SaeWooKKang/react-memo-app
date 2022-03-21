@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
-import { makeDate } from "./fs";
+import { YMD, diffrent, array, push } from "./fs";
 
 import { useSelector } from 'react-redux';
-import { go, each, map, take, tap, join, flat } from 'fxjs';
+import { go, each, map } from 'fxjs';
 
 const CompletedList = ({ onDeleteTodo }) => {
   
@@ -13,42 +13,24 @@ const CompletedList = ({ onDeleteTodo }) => {
   const handleDeleteTodo = ({ target }) => target.matches("#delete") && 
     onDeleteTodo(target.parentNode.parentNode.id, doneDatum, "doneDatum");
   
-  // [2022, 3, 19]
-  const dateArr = date => go(
-    makeDate(date), // {}
-    Object.entries, // [ [], [], [] ]
-    map( ([_, v]) => v), // [2022, 3, 19]
-  );
-
   let lastCategory = "";
   
-  // [ {}, {}]
+  // [ <div>1</div>, <div>2</div> ]
   const tmpl = go(
     doneDatum,
-    map(( {startDate, doneDate, text} ) => {
+    map(({ startDate, doneDate, text }) => {
 
-      let doneYearMonth
-      let doneYearMonthDate
-      const startYearMonthDate = join('.', dateArr(startDate));
+      const doneYearMonth = YMD(doneDate, 2);
+      const doneYearMonthDate = YMD(doneDate, 3);
+      const startYearMonthDate = YMD(startDate, 3);
 
-      go(
-        dateArr(doneDate),
-        tap( // YMD
-          join('.'), // 2022.3.19
-          v => [v],
-          each(date => doneYearMonthDate = date)
-        ),
-        tap( // YM
-          take(2), // [2022, 3]
-          join('.'), // 2022.3
-          v => [v],
-          each(date => doneYearMonth = date)
-        ),
-      );
-
-      return [doneYearMonth !== lastCategory && <TodoDateRow date={ doneDate } key={ doneDate } />,
-          (lastCategory = doneYearMonth,
-            <div key={ startDate } onClick={ handleDeleteTodo } id={ startDate }>
+      return go(
+        array( 
+          diffrent(doneYearMonth, lastCategory) 
+            && <TodoDateRow date={ doneDate } key={ doneDate } />),
+        each(_ => lastCategory = doneYearMonth),
+        push(
+          <div key={ startDate } onClick={ handleDeleteTodo } id={ startDate }>
               <div className="period">
                 { startYearMonthDate }~{ doneYearMonthDate }
               </div>
@@ -56,11 +38,7 @@ const CompletedList = ({ onDeleteTodo }) => {
                 <Todo todoText={ text } />
                 <ion-icon id="delete" name="close-circle-outline" className="delete" ></ion-icon>
               </div>
-            </div>
-          )
-      ]
-    }), // [ [ {}, {} ]]
-    flat // [{}, {}]
+          </div>))}) 
   );
   
   return (

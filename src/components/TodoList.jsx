@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from "react";
 import TodoDateRow from "./TodoDateRow";
 import Todo from "./Todo";
-import {compare} from './fs';
+import { compare, array, diffrent, push, YMD } from './fs';
 
 import { useSelector } from 'react-redux';
 
@@ -47,41 +47,29 @@ const TodoList = props => {
     },
     [onDeleteTodo, doneDatum, saveLocalAndStore]
   );
-  
-  // 수정 해야할 부분
-  const copyDatum = [...todoDatum];
-  const rows = [];
+
   let lastCategory = null;
 
-  copyDatum && copyDatum.forEach(({todoDate, startDate, text}) => {
-    if (todoDate !== lastCategory) {
-      rows.push(<TodoDateRow date={ startDate } key={ startDate + 10 } />);
-    }
-    rows.push(
-      <div
-        className="todoData"
-        key={ startDate }
-        id={ startDate }
-      >
-        <Todo todoText={ text } />
-        <ion-icon
-          id="done"
-          className="done"
-          name="checkmark-circle-outline"
-        ></ion-icon>
-        <ion-icon
-          id="delete"
-          className="delete"
-          name="close-circle-outline"
-        ></ion-icon>
-      </div>
-    );
-    lastCategory = todoDate;
-  });
+  // [ <div>1</div>, <div>2</div> ]
+  const tmpl = go(
+    todoDatum,
+    map(({ startDate, text }) => 
+      go(
+        array(
+          diffrent(YMD(startDate), lastCategory) 
+            && <TodoDateRow date={ startDate } key={ startDate + 10 } />),
+        each(_ => lastCategory = YMD(startDate)), 
+        push( 
+          <div className="todoData" key={ startDate } id={ startDate }>
+            <Todo todoText={ text } />
+            <ion-icon id="done" className="done" name="checkmark-circle-outline"></ion-icon>
+            <ion-icon id="delete" className="delete"name="close-circle-outline"></ion-icon>
+          </div>))) 
+  );
 
   return (
     <div onClick={ onClickRouter } className="todoList">
-      <div>{ rows }</div>
+      <div>{ todoDatum && tmpl }</div>
     </div>
   );
 };
