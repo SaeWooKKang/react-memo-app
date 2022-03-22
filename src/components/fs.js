@@ -25,7 +25,7 @@ export const dateArr = date => go(
 );
 
 // 2022.3.19 or 2022.3 or 2022
-export const YMD = (date, count) => go(
+export const YMD = (date, count = 3) => go(
   dateArr(date),
   take(count), // [2022, 3]
   join('.'), // 2022.3

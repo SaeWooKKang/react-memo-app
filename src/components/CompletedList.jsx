@@ -21,8 +21,8 @@ const CompletedList = ({ onDeleteTodo }) => {
     map(({ startDate, doneDate, text }) => {
 
       const doneYearMonth = YMD(doneDate, 2);
-      const doneYearMonthDate = YMD(doneDate, 3);
-      const startYearMonthDate = YMD(startDate, 3);
+      const doneYearMonthDate = YMD(doneDate);
+      const startYearMonthDate = YMD(startDate);
 
       return go(
         array( 

@@ -21,14 +21,13 @@ const TodoList = props => {
       : target.matches("#done") && onDoneTodo(id, todoDatum);
   };
 
-  // handleDeleteTodo는 props로 전달 받은 OnDeleteTodo를 실행하는데 반환을 안해서 값을 캐치 못했음..
   const onDoneTodo = useCallback(
     (key, todoDatum) => {
 
       // 완료된 데이터를 얻음
       const doneTodo = onDeleteTodo(key, todoDatum, "todoDatum"); // [{text: "1", startDate: 16, doneDate: null}] 
 
-      // 참조에 의한 전달 지우기 -> 다른 멋진 방식이 있나 ?
+      // 참조에 의한 전달 지우기
       let doneTodo2 = flat(map(entries, doneTodo)); // [ [], [] ]
 
       // 완료 날짜 추가
@@ -56,9 +55,9 @@ const TodoList = props => {
     map(({ startDate, text }) => 
       go(
         array(
-          diffrent(YMD(startDate), lastCategory) 
+          diffrent(YMD(startDate, 2), lastCategory) 
             && <TodoDateRow date={ startDate } key={ startDate + 10 } />),
-        each(_ => lastCategory = YMD(startDate)), 
+        each(_ => lastCategory = YMD(startDate, 2)), 
         push( 
           <div className="todoData" key={ startDate } id={ startDate }>
             <Todo todoText={ text } />
